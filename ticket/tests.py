@@ -1,6 +1,9 @@
 from datetime import datetime
+from django.conf import settings
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+
+from corner_ticketing.celery import app
 
 from ticket.models import Ticket, EventType, TicketInventory, UserTicket, Event
 from ticket.services.ticket_service import TicketService
@@ -10,6 +13,9 @@ from ticket.services.ticket_transfer_service import TicketTransferService
 
 # Create your tests here.
 class TicketTest(TestCase):
+    def setUp(self):
+        settings.DEBUG = True   # Test 환경에서는 DEBUG=False가 default, 메일이 잘못 나가는 것을 방지
+        app.conf.update(CELERY_ALWAYS_EAGER=True)
     @classmethod
     def setUpTestData(cls):
         event = Event.objects.create(

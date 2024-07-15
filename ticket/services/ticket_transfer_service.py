@@ -9,6 +9,7 @@ from django.db import transaction
 from corner_ticketing import settings
 from ticket.models import Ticket, UserTicket, UserTicketState
 from ticket.utils import generate_random_slug_code
+from ticket.tasks import send_transfer_request_email
 
 User = get_user_model()
 
@@ -39,7 +40,13 @@ class TicketTransferService:
                                      'receiver': receiver.id},
                          nx=True,
                          timeout=5 * 60)):
-            # TODO: mail 보내기 task
+
+            send_transfer_request_email.delay(
+                giver_id=giver.id,
+                receiver_id=receiver.id,
+                origin_ticket_id=origin_ticket.uuid,
+                transfer_code=transfer_code
+            )
             return transfer_code
         else:
             raise Exception()

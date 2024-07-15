@@ -3,6 +3,8 @@ import smtplib
 from abc import ABCMeta, abstractmethod
 from email.message import EmailMessage
 
+from django.conf import settings
+
 
 class EmailSender(metaclass=ABCMeta):
     @abstractmethod
@@ -12,8 +14,9 @@ class EmailSender(metaclass=ABCMeta):
 
 class GmailEmailSender(EmailSender):
     def __init__(self, sender, receiver, title, content, subtype):
-        self.sender = sender
-        self.receiver = receiver
+        print(settings.DEBUG)
+        self.sender = sender if not settings.DEBUG else 'gkscodus11@gmail.com'
+        self.receiver = receiver if not settings.DEBUG else 'gkscodus11@naver.com'
         self.title = title
         self.content = content
         self.subtype = subtype
@@ -22,6 +25,7 @@ class GmailEmailSender(EmailSender):
     def __set_message(self):
         self.message['Subject'] = self.title
         self.message['From'] = self.sender
+        self.message['To'] = self.receiver
         self.message.add_alternative(self.content, subtype=self.subtype)
 
     def send_email(self):
