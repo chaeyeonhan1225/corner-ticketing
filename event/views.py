@@ -3,17 +3,30 @@ from django_filters import FilterSet, CharFilter
 from django_filters.rest_framework import DjangoFilterBackend, filters
 from rest_framework import status, serializers
 from rest_framework.exceptions import APIException
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from enumfields.drf.serializers import EnumSerializerField, EnumSupportSerializerMixin
-from ticket.models import Ticket, TicketInventory
-from ticket.services.ticket_purchase_service import TicketPurchaseService
-from ticket.services.ticket_inventory_service import TicketInventoryService
+from event.models import Event, Ticket, TicketInventory
+from event.services.ticket_purchase_service import TicketPurchaseService
+from event.services.ticket_inventory_service import TicketInventoryService
 
-class TicketFilterSet(FilterSet):
-    title = CharFilter(field_name='title', lookup_expr='contains')
+
+class EventSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = '__all__'
+
+
+class EventListCreateView(ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = (IsAuthenticated,) # TODO: create는 AdminOnly로 변경
+
+
+# class TicketFilterSet(FilterSet):
+#     title = CharFilter(field_name='title', lookup_expr='contains')
 
 class TicketSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
@@ -25,7 +38,7 @@ class TicketView(ListAPIView):
     serializer_class = TicketSerializer
     queryset = Ticket.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = TicketFilterSet
+    # filterset_class = TicketFilterSet
 
 
 class TicketReserveView(APIView):

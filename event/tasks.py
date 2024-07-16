@@ -4,7 +4,7 @@ from celery import shared_task
 
 
 from common.utils import GmailEmailSender
-from ticket.models import UserTicket
+from event.models import UserTicket
 
 User = get_user_model()
 

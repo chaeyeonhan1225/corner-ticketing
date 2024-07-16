@@ -6,10 +6,9 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db import transaction
 
-from corner_ticketing import settings
-from ticket.models import Ticket, UserTicket, UserTicketState
-from ticket.utils import generate_random_slug_code
-from ticket.tasks import send_transfer_request_email
+from event.models import Ticket, UserTicket, UserTicketState
+from event.utils import generate_random_slug_code
+from event.tasks import send_transfer_request_email
 
 User = get_user_model()
 
@@ -56,7 +55,6 @@ class TicketTransferService:
         if transfer_info is None:
             raise Exception()
         transfer_code = transfer_info.get('transfer_code')
-        origin_ticket_id = transfer_info.get('origin_ticket_id')
         giver_id = transfer_info.get('giver')
         receiver_id = transfer_info.get('receiver')
 

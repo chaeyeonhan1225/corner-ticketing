@@ -2,8 +2,8 @@ import time
 from django.db import transaction
 from django.core.cache import cache
 
-from ticket.models import Ticket, UserTicket
-from ticket.exceptions import NotEnoughTicketsException
+from event.models import Ticket, UserTicket
+from event.exceptions import NotEnoughTicketsException
 
 
 class TicketPurchaseService:

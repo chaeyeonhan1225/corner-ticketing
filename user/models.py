@@ -14,6 +14,7 @@ class MemberState(Enum):
     INACTIVE = "INACTIVE"  # 비활성화
     WITHDRAWN = "WITHDRAWN"  # 탈퇴회원
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email or not password:

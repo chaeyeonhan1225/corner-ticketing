@@ -39,6 +39,6 @@ urlpatterns = [
     # path(r'redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc-v1'),
     path('admin/', admin.site.urls),
     path('api/users/', include('user.urls')),
-    path('api/tickets/', include('ticket.urls')),
+    path('api/events/', include('event.urls')),
     path('api/common/', include('common.urls'))
 ]

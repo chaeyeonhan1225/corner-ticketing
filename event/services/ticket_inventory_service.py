@@ -1,4 +1,4 @@
-from ticket.models import Ticket, TicketInventory
+from event.models import Ticket, TicketInventory
 
 class TicketInventoryService:
     def __init__(self, ticket: Ticket):

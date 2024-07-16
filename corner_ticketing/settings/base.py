@@ -33,7 +33,7 @@ AUTH_USER_MODEL = 'user.User'
 
 with open(f"{BASE_DIR}/secret_key.txt", "r") as f:
     SECRET_KEY = f.read().strip()
-    print(f'SECRET_KEY: {SECRET_KEY}')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'common.apps.CommonConfig',
     'user.apps.UserConfig',
-    'ticket.apps.TicketConfig'
+    'event.apps.EventConfig'
 ]
 
 MIDDLEWARE = [

@@ -14,9 +14,8 @@ class EmailSender(metaclass=ABCMeta):
 
 class GmailEmailSender(EmailSender):
     def __init__(self, sender, receiver, title, content, subtype):
-        print(settings.DEBUG)
-        self.sender = sender if not settings.DEBUG else 'gkscodus11@gmail.com'
-        self.receiver = receiver if not settings.DEBUG else 'gkscodus11@naver.com'
+        self.sender = sender if not settings.DEBUG else settings.TEST_SENDER_EMAIL
+        self.receiver = receiver if not settings.DEBUG else settings.TEST_RECEIVER_EMAIL
         self.title = title
         self.content = content
         self.subtype = subtype
@@ -32,7 +31,7 @@ class GmailEmailSender(EmailSender):
         self.__set_message()
         with smtplib.SMTP('smtp.gmail.com', 587) as s:
             s.starttls()
-            s.login(self.sender, 'dhzktwhhiwhdkcnw')
+            s.login(self.sender, settings.GMAIL_APP_PASSWORD)
             s.sendmail(self.sender, self.receiver, self.message.as_string())
 
 

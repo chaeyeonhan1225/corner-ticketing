@@ -48,29 +48,39 @@ class Event(TimeRecordingMixin):
 
 
 class Ticket(TimeRecordingMixin):
-    event = models.ForeignKey('ticket.Event', on_delete=models.CASCADE, verbose_name='공연/경기 ID')
+    event = models.ForeignKey('event.Event', on_delete=models.CASCADE, verbose_name='공연/경기 ID')
     started_at = models.DateTimeField(null=True, blank=True, verbose_name='공연/경기 입장시간')
     ended_at = models.DateTimeField(null=True, blank=True, verbose_name='공연/경기 퇴장시간')
     status = EnumField(TicketState, max_length=20, verbose_name='티켓 상태', default=TicketState.READY)
 
+    class Meta:
+        db_table = 'ticket'
+        verbose_name = '티켓'
 
 class TicketInventory(TimeRecordingMixin):
-    ticket = models.ForeignKey('ticket.Ticket', on_delete=models.CASCADE)
+    ticket = models.ForeignKey('event.Ticket', on_delete=models.CASCADE)
     quantity = models.IntegerField(null=False, blank=False, verbose_name='수량')
 
+    class Meta:
+        db_table = 'ticket_inventory'
+        verbose_name = '티켓 재고'
 
 class TicketInventoryHistory(TimeRecordingMixin):
-    inventory = models.ForeignKey('ticket.TicketInventory', on_delete=models.CASCADE)
+    inventory = models.ForeignKey('event.TicketInventory', on_delete=models.CASCADE)
     before = models.JSONField(null=True, blank=True, verbose_name='수정 전')
     after = models.JSONField(null=True, blank=False, verbose_name='수정 후')
 
     def __str__(self):
         return f'{self.inventory.id}_history_{self.id}'
 
+    class Meta:
+        db_table = 'ticket_inventory_history'
+        verbose_name = '티켓 재고 변경 이력'
+
 
 class UserTicket(TimeRecordingMixin):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ticket = models.ForeignKey('ticket.Ticket', on_delete=models.CASCADE, null=False, blank=False)
+    ticket = models.ForeignKey('event.Ticket', on_delete=models.CASCADE, null=False, blank=False)
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE, null=False, blank=False,
                              verbose_name='티켓 소유 유저', related_name='owner')
     giver = models.ForeignKey('user.User', on_delete=models.CASCADE, null=True, blank=True,
@@ -85,12 +95,20 @@ class UserTicket(TimeRecordingMixin):
             return f'{self.owner}_{self.ticket}({self.giver})'
         return f'{self.owner}_{self.ticket}'
 
+    class Meta:
+        db_table = 'user_ticket'
+        verbose_name = '유저가 구매한 티켓'
+
 
 class UserTicketHistory(TimeRecordingMixin):
-    user_ticket = models.ForeignKey('ticket.UserTicket', on_delete=models.CASCADE, null=False, blank=False, verbose_name='유저 티켓')
+    user_ticket = models.ForeignKey('event.UserTicket', on_delete=models.CASCADE, null=False, blank=False, verbose_name='유저 티켓')
     before = models.JSONField(null=True, blank=True, verbose_name='수정 전')
     after = models.JSONField(null=True, blank=False, verbose_name='수정 후')
 
     def __str__(self):
         return f'{self.user_ticket.id}_history_{self.id}'
+
+    class Meta:
+        db_table = 'user_ticket_history'
+        verbose_name = '유저가 구매한 티켓 변경 이력'
 

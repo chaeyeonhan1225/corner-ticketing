@@ -2,13 +2,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import Token
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from enumfields.drf.serializers import EnumSupportSerializerMixin
 
-from ticket.models import Ticket, UserTicket
+from event.models import Ticket, UserTicket
 from user.tasks import send_joined_email
 
 User = get_user_model()
@@ -90,9 +90,24 @@ class UserTicketSerializer(serializers.ModelSerializer):
 
 
 class UserTicketView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserTicketSerializer
 
     # TODO: 날짜 기준 필터링 추가
     def get_queryset(self):
         return UserTicket.objects.filter(owner=self.request.user)
+
+class UserTicketDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTicket,
+        fields = '__all__'
+        depth = 3
+
+class UserTicketDetailView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserTicketDetailSerializer
+
+    def get_queryset(self, user_ticket_id):
+        return UserTicket.objects.filter(uuid=user_ticket_id)
+
+

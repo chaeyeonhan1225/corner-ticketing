@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
-from ticket.models import Event, Ticket, EventType, TicketInventory
+from event.models import Event, Ticket, EventType, TicketInventory
 
 
 class TicketService():

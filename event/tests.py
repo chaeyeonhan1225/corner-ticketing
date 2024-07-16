@@ -5,10 +5,10 @@ from django.contrib.auth import get_user_model
 
 from corner_ticketing.celery import app
 
-from ticket.models import Ticket, EventType, TicketInventory, UserTicket, Event
-from ticket.services.ticket_service import TicketService
-from ticket.services.ticket_purchase_service import TicketPurchaseService
-from ticket.services.ticket_transfer_service import TicketTransferService
+from event.models import Ticket, EventType, TicketInventory, UserTicket, Event
+from event.services.ticket_service import TicketService
+from event.services.ticket_purchase_service import TicketPurchaseService
+from event.services.ticket_transfer_service import TicketTransferService
 
 
 # Create your tests here.
