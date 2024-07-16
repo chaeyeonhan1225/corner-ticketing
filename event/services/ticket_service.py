@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from event.models import Event, Ticket, EventType, TicketInventory
 
 
-class TicketService():
+class TicketService:
     @transaction.atomic
     def create(self, param):
         try:
@@ -11,6 +11,8 @@ class TicketService():
 
             ticket = Ticket(
                 event=event,
+                regular_price=param.get('regular_price'),
+                sale_price=param.get('sale_price'),
                 started_at=param.get('started_at'),
                 ended_at=param.get('ended_at')
             )

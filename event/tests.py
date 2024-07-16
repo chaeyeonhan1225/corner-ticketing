@@ -27,6 +27,8 @@ class TicketTest(TestCase):
         param = {
             'event_id': event.id,
             'started_at': datetime.now(),
+            'regular_price': 10000,
+            'ended_price': 10000,
             'ended_at': datetime.now(),
             'quantity': 10
         }
