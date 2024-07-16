@@ -12,6 +12,7 @@ class TicketInventorySerializer(EnumSupportSerializerMixin, serializers.ModelSer
         model = TicketInventory
         fields = '__all__'
 
+
 class TicketInventoryView(APIView):
     def get(self, request, ticket_id):
         inventory = TicketInventory.objects.filter(ticket_id=ticket_id).first()

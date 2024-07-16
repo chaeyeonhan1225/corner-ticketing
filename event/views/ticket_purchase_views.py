@@ -7,11 +7,11 @@ from event.services.ticket_purchase_service import TicketPurchaseService
 
 
 class TicketPurchaseView(APIView):
-    def post(self, request, ticket_id):
+    def post(self, request, event_id, ticket_id):
         try:
             result = TicketPurchaseService(request.user).purchase_ticket(
-                ticket_id=ticket_id,
-                ticket_quantity=int(request.data["quantity"])
+                id=ticket_id,
+                quantity=int(request.data["quantity"])
             )
             print(f'result = {result}')
             return Response(data={"message": "success"})

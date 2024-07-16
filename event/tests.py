@@ -1,13 +1,13 @@
 from datetime import datetime
+
 from django.conf import settings
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 from corner_ticketing.celery import app
-
-from event.models import Ticket, EventType, TicketInventory, UserTicket, Event
-from event.services.ticket_service import TicketService
+from event.models import EventType, Event
 from event.services.ticket_purchase_service import TicketPurchaseService
+from event.services.ticket_service import TicketService
 from event.services.ticket_transfer_service import TicketTransferService
 
 
@@ -16,10 +16,11 @@ class TicketTest(TestCase):
     def setUp(self):
         settings.DEBUG = True   # Test 환경에서는 DEBUG=False가 default, 메일이 잘못 나가는 것을 방지
         app.conf.update(CELERY_ALWAYS_EAGER=True)
+
     @classmethod
     def setUpTestData(cls):
         event = Event.objects.create(
-            title='[잠실]7.16 엘지 vs 롯데',
+            title='[잠실] 7.16 엘지 vs 롯데',
             subtitle='엘롯라시코 1차전',
             type=EventType.SPORTS
         )
@@ -64,13 +65,3 @@ class TicketTest(TestCase):
             code=result,
             receiver=self.userB
         )
-
-
-
-
-
-
-
-
-
-

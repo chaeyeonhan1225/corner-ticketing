@@ -2,13 +2,13 @@ from django.core.cache import cache
 from django_filters.rest_framework import DjangoFilterBackend
 from enumfields.drf.serializers import EnumSupportSerializerMixin
 from prompt_toolkit.validation import ValidationError
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from event.models import Ticket
+from event.models import Event, Ticket
 from event.services.ticket_service import TicketService
 
 
@@ -27,17 +27,16 @@ class TicketCreateParamSerializer(serializers.Serializer):
     ended_at = serializers.DateTimeField(help_text='공연/전시 종료시간', required=True)
     quantity = serializers.IntegerField(help_text='티켓 수량', required=True, min_value=1)
 
-class TicketView(ListAPIView):
-    permission_classes = (AllowAny, )
-    serializer_class = TicketSerializer
-    queryset = Ticket.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    # filterset_class = TicketFilterSet
 
-class TicketCreateView(CreateAPIView):
+class TicketListCreateView(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def create(self, request, event_id:int):
+    def get(self, request, event_id:int):
+        event = Event.objects.filter(id=event_id).prefetch_related('ticket_set').first()
+        serializer = TicketSerializer(event.ticket_set, many=True)
+        return Response(data=serializer.data)
+
+    def post(self, request, event_id:int):
         serializer = TicketCreateParamSerializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)

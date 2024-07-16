@@ -13,6 +13,7 @@ from user.tasks import send_joined_email
 
 User = get_user_model()
 
+
 class UserRegisterSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
@@ -24,19 +25,23 @@ class UserRegisterSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
             **validated_data
         )
 
+
 class UserLoginSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
 
+
 class UserProfileSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'nickname', 'created_at', 'updated_at', 'status']
 
+
 class UserRegisterView(APIView):
     permission_classes = (AllowAny,)
+
     def post(self, request, *args, **kwargs):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -83,7 +88,8 @@ class UserProfileView(APIView):
 
 
 # TODO: UserTicketSerializer 고도화 추가
-class UserTicketSerializer(serializers.ModelSerializer):
+class UserTicketSerializer(EnumSupportSerializerMixin,
+                           serializers.ModelSerializer):
     class Meta:
         model = UserTicket
         fields = '__all__'
@@ -97,17 +103,19 @@ class UserTicketView(ListAPIView):
     def get_queryset(self):
         return UserTicket.objects.filter(owner=self.request.user)
 
-class UserTicketDetailSerializer(serializers.ModelSerializer):
+
+class UserTicketDetailSerializer(EnumSupportSerializerMixin,
+                                 serializers.ModelSerializer):
     class Meta:
-        model = UserTicket,
+        model = UserTicket
         fields = '__all__'
-        depth = 3
+
 
 class UserTicketDetailView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserTicketDetailSerializer
+    lookup_field = 'uuid'
+    lookup_url_kwarg = 'user_ticket_id'
 
-    def get_queryset(self, user_ticket_id):
-        return UserTicket.objects.filter(uuid=user_ticket_id)
-
-
+    def get_queryset(self):
+        return UserTicket.objects.filter(owner=self.request.user).select_related('ticket', 'ticket__event')
