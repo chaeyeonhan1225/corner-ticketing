@@ -9,27 +9,46 @@ from common.models import TimeRecordingMixin
 
 @unique
 class EventType(Enum):
-    CONCERT = "CONCERT"  # 공연
-    SPORTS = "SPORTS"  # 스포츠
-    ETC = "ETC"  # 기타
+    CONCERT = "CONCERT"
+    SPORTS = "SPORTS"
+    ETC = "ETC"
+
+    class Labels:
+        CONCERT = "공연"
+        SPORTS = "스포츠"
+        ETC = "기타"
 
 
 @unique
 class TicketState(Enum):
-    READY = "READY"  # 판매대기
-    SALE = "SALE"  # 판매중
-    SOLD_OUT = "SOLD_OUT"  # 품절
-    PAUSED = "PAUSED"  # 판매 일시 중지
-    CLOSED = "CLOSED"  # 판매 종료
+    READY = "READY"
+    SALE = "SALE"
+    SOLD_OUT = "SOLD_OUT"
+    PAUSED = "PAUSED"
+    CLOSED = "CLOSED"
+
+    class Labels:
+        READY = "판매 대기"
+        SALE = "판매중"
+        SOLD_OUT = "품절"
+        PAUSED = "판매 일시 중지"
+        CLOSED = "판매 종료"
 
 
 @unique
 class UserTicketState(Enum):
-    NOT_USED = "NOT_USED"  # 미사용
-    USED = "USED"  # 사용 완료
-    NO_SHOW = "NO_SHOW"  # 노쇼
-    CANCELED = "CANCELED"  # 취소
-    TRANSFERRED = "TRANSFERRED"  # 선물함
+    NOT_USED = "NOT_USED"
+    USED = "USED"
+    NO_SHOW = "NO_SHOW"
+    CANCELED = "CANCELED"
+    TRANSFERRED = "TRANSFERRED"
+
+    class Labels:
+        NOT_USED = "미사용"
+        USED = "사용 완료"
+        NO_SHOW = "노쇼"
+        CANCELED = "취소"
+        TRANSFERRED = "선물 완료"
 
 
 class Event(TimeRecordingMixin):
