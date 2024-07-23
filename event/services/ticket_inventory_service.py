@@ -1,5 +1,6 @@
 from event.models import Ticket, TicketInventory
 
+
 class TicketInventoryService:
     def __init__(self, ticket: Ticket):
         self.ticket = ticket
@@ -11,4 +12,3 @@ class TicketInventoryService:
 
         # TODO: history add task
         return inventory
-

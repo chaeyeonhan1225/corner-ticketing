@@ -1,8 +1,8 @@
 from enum import unique
 
 from django.contrib.auth.base_user import BaseUserManager
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 from enumfields import Enum, EnumField
 
 from common.models import TimeRecordingMixin
@@ -37,15 +37,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimeRecordingMixin):
-    email = models.EmailField(unique=True, verbose_name='email')
-    nickname = models.CharField(max_length=50, unique=True, verbose_name='nickname')
-    status = EnumField(MemberState, default=MemberState.ACTIVE, verbose_name='status', max_length=20)
+    email = models.EmailField(unique=True, verbose_name="email")
+    nickname = models.CharField(max_length=50, unique=True, verbose_name="nickname")
+    status = EnumField(MemberState, default=MemberState.ACTIVE, verbose_name="status", max_length=20)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nickname']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["nickname"]
 
     def __str__(self):
         return self.email
-

@@ -10,14 +10,14 @@ class TicketPurchaseView(APIView):
     def post(self, request, event_id, ticket_id):
         try:
             result = TicketPurchaseService(request.user).purchase_ticket(
-                id=ticket_id,
-                quantity=int(request.data["quantity"])
+                id=ticket_id, quantity=int(request.data["quantity"])
             )
-            print(f'result = {result}')
+            print(f"result = {result}")
             return Response(data={"message": "success"})
         except APIException as ae:
             return Response(data={"detail": ae.detail}, status=ae.status_code)
         except Exception as e:
             import traceback
+
             traceback.print_tb(e.__traceback__)
             return Response(data={"message": "fail"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

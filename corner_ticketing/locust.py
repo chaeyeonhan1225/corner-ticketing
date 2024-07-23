@@ -1,5 +1,5 @@
 # locustfile.py
-from locust import HttpUser, task, between
+from locust import HttpUser, between, task
 
 
 class WebsiteTestUser(HttpUser):
@@ -7,12 +7,7 @@ class WebsiteTestUser(HttpUser):
 
     @task
     def my_task(self):
-        test_access_token = ''
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {test_access_token}'
-        }
+        test_access_token = ""
+        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {test_access_token}"}
         ticket_id = 3
-        self.client.post(f"/api/tickets/{ticket_id}/purchase/",
-                         headers=headers,
-                         json={'quantity': 1})
+        self.client.post(f"/api/tickets/{ticket_id}/purchase/", headers=headers, json={"quantity": 1})

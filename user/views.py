@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import Token
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from enumfields.drf.serializers import EnumSupportSerializerMixin
+from rest_framework import serializers, status
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import Token
 
 from event.models import Ticket, UserTicket
 from user.tasks import send_joined_email
@@ -17,26 +17,24 @@ User = get_user_model()
 class UserRegisterSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        return User.objects.create_user(
-            **validated_data
-        )
+        return User.objects.create_user(**validated_data)
 
 
 class UserLoginSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class UserProfileSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'nickname', 'created_at', 'updated_at', 'status']
+        fields = ["id", "email", "nickname", "created_at", "updated_at", "status"]
 
 
 class UserRegisterView(APIView):
@@ -49,13 +47,7 @@ class UserRegisterView(APIView):
             token: Token = TokenObtainPairSerializer.get_token(user)
             send_joined_email.delay(user.id)
             return Response(
-                {
-                    'user': serializer.data,
-                    'token': {
-                        'access': str(token.access_token),
-                        'refrest': str(token)
-                    }
-                }
+                {"user": serializer.data, "token": {"access": str(token.access_token), "refrest": str(token)}}
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -70,11 +62,7 @@ class UserLoginView(APIView):
             user = token_serializer.user
             serializer = UserLoginSerializer(user)
             return Response(
-                {
-                    'user': serializer.data,
-                    'token': token_serializer.validated_data
-                },
-                status=status.HTTP_200_OK
+                {"user": serializer.data, "token": token_serializer.validated_data}, status=status.HTTP_200_OK
             )
 
         return Response(token_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -88,11 +76,10 @@ class UserProfileView(APIView):
 
 
 # TODO: UserTicketSerializer 고도화 추가
-class UserTicketSerializer(EnumSupportSerializerMixin,
-                           serializers.ModelSerializer):
+class UserTicketSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = UserTicket
-        fields = '__all__'
+        fields = "__all__"
 
 
 class UserTicketView(ListAPIView):
@@ -104,18 +91,17 @@ class UserTicketView(ListAPIView):
         return UserTicket.objects.filter(owner=self.request.user)
 
 
-class UserTicketDetailSerializer(EnumSupportSerializerMixin,
-                                 serializers.ModelSerializer):
+class UserTicketDetailSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = UserTicket
-        fields = '__all__'
+        fields = "__all__"
 
 
 class UserTicketDetailView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserTicketDetailSerializer
-    lookup_field = 'uuid'
-    lookup_url_kwarg = 'user_ticket_id'
+    lookup_field = "uuid"
+    lookup_url_kwarg = "user_ticket_id"
 
     def get_queryset(self):
-        return UserTicket.objects.filter(owner=self.request.user).select_related('ticket', 'ticket__event')
+        return UserTicket.objects.filter(owner=self.request.user).select_related("ticket", "ticket__event")

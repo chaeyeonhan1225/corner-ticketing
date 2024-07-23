@@ -23,6 +23,7 @@ django-redis = "^5.4.0"
 django-crontab = "^0.7.1"
 django-filter = "^24.2"
 celery = {extras = ["redis"], version = "^5.4.0"}
+django-silk = "^5.1.0"
 
 
 [build-system]

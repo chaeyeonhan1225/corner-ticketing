@@ -1,5 +1,5 @@
 from enumfields.drf.serializers import EnumSupportSerializerMixin
-from rest_framework import status, serializers
+from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -10,7 +10,7 @@ from event.services.ticket_inventory_service import TicketInventoryService
 class TicketInventorySerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = TicketInventory
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TicketInventoryView(APIView):
@@ -29,8 +29,8 @@ class TicketInventoryUpdateView(APIView):
     def post(self, request, ticket_id):
         try:
             ticket = Ticket.objects.get(id=ticket_id)
-            quantity = int(request.data.get('quantity'))
+            quantity = int(request.data.get("quantity"))
             inventory = TicketInventoryService(ticket).update(quantity)
             return Response(data=TicketInventorySerializer(inventory).data)
         except Ticket.DoesNotExist:
-            return Response(data={'detail': 'Ticket does not Exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Ticket does not Exist"}, status=status.HTTP_404_NOT_FOUND)

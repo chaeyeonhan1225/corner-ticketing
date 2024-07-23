@@ -1,9 +1,10 @@
-from django.contrib.auth import get_user_model
 from celery import shared_task
+from django.contrib.auth import get_user_model
 
 from common.utils import GmailEmailSender
 
 User = get_user_model()
+
 
 @shared_task
 def send_joined_email(user_id: int):
@@ -17,12 +18,14 @@ def send_joined_email(user_id: int):
                     <p>(이 메일은 테스트용입니다.)</p>
                   </body>
                 </html>
-                """.format(user_nickname=user.nickname)
+                """.format(
+        user_nickname=user.nickname
+    )
 
     GmailEmailSender(
-        sender='gkscodus11@gmail.com',
-        receiver='gkscodus11@naver.com',
-        title='회원 가입을 축하드립니다!',
+        sender="gkscodus11@gmail.com",
+        receiver="gkscodus11@naver.com",
+        title="회원 가입을 축하드립니다!",
         content=content,
-        subtype='html'
+        subtype="html",
     ).send_email()

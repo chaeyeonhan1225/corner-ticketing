@@ -1,19 +1,20 @@
+import threading
 import time
 
-from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-import threading
+from rest_framework.views import APIView
 
 
 class ConcurrencyTestView(APIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
+
     def do_long_task(self):
         sum = 0
         for i in range(0, 1_000_000):
-            sum += (i%2)
+            sum += i % 2
         return sum
 
     def find_all_users(self):
@@ -23,9 +24,9 @@ class ConcurrencyTestView(APIView):
         return users
 
     def get(self, request):
-        print(f'Request 1 {threading.currentThread().ident}')
+        print(f"Request 1 {threading.currentThread().ident}")
         self.find_all_users()
-        print(f'Request 2 {threading.currentThread().ident}')
+        print(f"Request 2 {threading.currentThread().ident}")
         self.find_all_users()
-        print(f'Request 3 {threading.currentThread().ident}')
-        return Response({'message': 'Complete!'})
+        print(f"Request 3 {threading.currentThread().ident}")
+        return Response({"message": "Complete!"})
