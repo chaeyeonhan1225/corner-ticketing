@@ -1,15 +1,15 @@
 from django.core.cache import cache
-from django_filters.rest_framework import DjangoFilterBackend
 from enumfields.drf.serializers import EnumSupportSerializerMixin
 from prompt_toolkit.validation import ValidationError
-from rest_framework import serializers, status
-from rest_framework.generics import CreateAPIView, ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import serializers
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from event.models import Event, Ticket
+from event.models import Ticket
 from event.services.ticket_service import TicketService
+
 
 # class TicketFilterSet(FilterSet):
 #     title = CharFilter(field_name='title', lookup_expr='contains')
@@ -29,13 +29,11 @@ class TicketCreateParamSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(help_text="티켓 수량", required=True, min_value=1)
 
 
-class TicketListCreateView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request, event_id: int):
-        event = Event.objects.filter(id=event_id).prefetch_related("ticket_set").first()
-        serializer = TicketSerializer(event.ticket_set, many=True)
-        return Response(data=serializer.data)
+class TicketListCreateView(ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = TicketSerializer
+    def get_queryset(self):
+        return Ticket.objects.filter(event_id=self.kwargs['event_id'])
 
     def post(self, request, event_id: int):
         serializer = TicketCreateParamSerializer(data=request.data)
